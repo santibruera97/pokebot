@@ -5,6 +5,7 @@ import pokebase as pb
 import random
 import time
 from pokebase import cache
+
 cache.API_CACHE
 import os
 
@@ -12,9 +13,12 @@ token = os.getenv("DISCORD_BOT_TOKEN")
 
 client = discord.Client()
 
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    cache.
+
 
 @client.event
 async def on_message(message):
@@ -26,17 +30,13 @@ async def on_message(message):
         shiny = random.randint(1, 8192)
         if shiny == 888:
             pokePic = pokemon.sprites.front_shiny
-        else: 
+        else:
             pokePic = pokemon.sprites.front_default
-        await message.channel.send(pokemon.name.capitalize(), file=pokePic)
+        await message.channel.send(pokePic)
+        await message.channel.send(pokemon.name.capitalize())
 
-
-
-
-
-    # if message.author.name == "PablitoBot" and message.content.startswith('Llamando al delivery...'):
+        # if message.author.name == "PablitoBot" and message.content.startswith('Llamando al delivery...'):
     #     await message.channel.send('Hola?')
-
 
     # if message.author.name == "PablitoBot" and message.content.startswith('Si, que tal? Para hacerte un pedido'):
     #     time.sleep(3)
@@ -46,7 +46,6 @@ async def on_message(message):
     #     time.sleep(3)
     #     await message.channel.send('No. Para para para, no puedo anotar así, ordena cuantas de carne queres, cuantas de choclo y así, no es tan dificil')
 
-
     # if message.author.name == "PablitoBot" and message.content.startswith('Si, tenes razon, disculpame. A ver, listo, anotas?'):
     #     time.sleep(3)
     #     await message.channel.send('Dale...')
@@ -55,11 +54,9 @@ async def on_message(message):
     #     time.sleep(3)
     #     await message.channel.send('No, de atun no nos quedan más')
 
-
     # if message.author.name == "PablitoBot" and message.content.startswith('Ah, entonces una mas de carne. Ahí no te enojas no? Para reemplazar la de atun'):
     #     time.sleep(3)
     #     await message.channel.send('Nonono, esta bien')
-
 
     # if message.author.name == "PablitoBot" and message.content.startswith('Bueno sigo, otra de carne y otra mas de carne'):
     #     time.sleep(3)
@@ -69,11 +66,9 @@ async def on_message(message):
     #     time.sleep(3)
     #     await message.channel.send('Sabes que? Dictamelo como quieras porque si no vamos a estar 10 horas, dale. Decimelo, porque, como se te cante las bolas que yo anoto')
 
-
     # if message.author.name == "PablitoBot" and message.content.startswith('Bueno, dos de carne, cuatro de choclo, cinco de carne, una de choclo, nueve de carne, una de carne, siete de choclo, cinco de carne, cinco de choclo, cinco de choclo, cinco de choclo, una de choclo, dos de choclo, cinco de choclo, cinco de choclo'):
     #     time.sleep(3)
     #     await message.channel.send('Ei ei ei ei. Que te pasa? Te volviste loco? Me estás cargando?')
-
 
 
 client.run(token)
