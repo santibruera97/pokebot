@@ -22,8 +22,12 @@ async def on_message(message):
     if message.content.startswith('$poke random'):
         pokeID = random.randint(1, 800)
         pokemon = pb.pokemon(pokeID)
-        image = pb.SpriteResource('pokemon', pokemon.id)
-        await message.channel.send(image.url)
+        shiny = random.randint(1, 8192)
+        if shiny == 888:
+            pokePic = pokemon.sprite.front_shiny
+        else: 
+            pokePic = pokemon.sprite.front_default
+        await message.channel.send(pokePic)
         await message.channel.send(pokemon.name.capitalize()) 
 
 
