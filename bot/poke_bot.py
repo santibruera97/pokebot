@@ -7,7 +7,9 @@ import time
 from pokebase import cache
 cache.API_CACHE
 import os
-token = os.getenv("DISCORD_BOT_TOKEN")
+
+# //token = os.getenv("DISCORD_BOT_TOKEN")
+token = 'ODUxOTU0NDQ4NzcwNTMxMzg4.YL_yaQ.LN6GiWRMdF-KvIQSryOyeZ7OxF8'
 
 client = discord.Client()
 
@@ -24,9 +26,9 @@ async def on_message(message):
         pokemon = pb.pokemon(pokeID)
         shiny = random.randint(1, 8192)
         if shiny == 888:
-            pokePic = pokemon.sprite.front_shiny
+            pokePic = pokemon.sprites.front_shiny
         else: 
-            pokePic = pokemon.sprite.front_default
+            pokePic = pokemon.sprites.front_default
         await message.channel.send(pokePic)
         await message.channel.send(pokemon.name.capitalize()) 
 
