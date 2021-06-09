@@ -1,0 +1,1 @@
+worker: python bot/poke_bot.py
