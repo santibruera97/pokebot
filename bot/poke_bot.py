@@ -28,8 +28,10 @@ async def on_message(message):
             pokePic = pokemon.sprites.front_shiny
         else: 
             pokePic = pokemon.sprites.front_default
-        await message.channel.send(pokePic)
-        await message.channel.send(pokemon.name.capitalize()) 
+        await message.channel.send(pokemon.name.capitalize(), file=pokePic)
+
+
+
 
 
     # if message.author.name == "PablitoBot" and message.content.startswith('Llamando al delivery...'):
