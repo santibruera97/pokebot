@@ -6,6 +6,8 @@ import random
 import time
 from pokebase import cache
 cache.API_CACHE
+import os
+token = os.getenv("DISCORD_BOT_TOKEN")
 
 client = discord.Client()
 
@@ -67,4 +69,4 @@ async def on_message(message):
         await message.channel.send(image.url)
         await message.channel.send(pokemon.name.capitalize()) 
 
-client.run('ODUxOTU0NDQ4NzcwNTMxMzg4.YL_yaQ.Wza4THZMPkP0x6Z84Ao4iPFWTN0')
+client.run(token)
