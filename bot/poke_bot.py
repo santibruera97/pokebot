@@ -8,8 +8,7 @@ from pokebase import cache
 cache.API_CACHE
 import os
 
-# //token = os.getenv("DISCORD_BOT_TOKEN")
-token = 'ODUxOTU0NDQ4NzcwNTMxMzg4.YL_yaQ.LN6GiWRMdF-KvIQSryOyeZ7OxF8'
+token = os.getenv("DISCORD_BOT_TOKEN")
 
 client = discord.Client()
 
