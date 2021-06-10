@@ -9,7 +9,6 @@ import database
 import os
 
 token = os.getenv("DISCORD_BOT_TOKEN")
-#token = 'ODUxOTU0NDQ4NzcwNTMxMzg4.YL_yaQ.KtQy9s7Y5uLPlpWPXR_O-GrKNMw'
 
 
 client = discord.Client()
