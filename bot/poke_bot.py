@@ -27,7 +27,7 @@ async def on_message(message):
         pokemon = pb.pokemon(poke_id)
         print(pokemon.stats)
         pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(pokemon)
+        pp.pprint(pokemon.stats)
         shiny = random.randint(1, 2048)
         if shiny == 1024:
             poke_pic = pokemon.sprites.front_shiny
