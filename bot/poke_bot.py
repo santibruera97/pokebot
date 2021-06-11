@@ -10,7 +10,6 @@ import os
 
 token = os.getenv("DISCORD_BOT_TOKEN")
 
-
 client = discord.Client()
 
 
@@ -34,9 +33,10 @@ async def on_message(message):
         await message.channel.send(poke_pic)
         await message.channel.send(pokemon.name.capitalize())
     if message.content.startswith('$poke register'):
-        user = database.get_user(message.author.id)
+        user = await database.get_user(message.author.id)
+        print(user)
         if user is None:
-            database.register_user(message.author.id)
+            await database.register_user(message.author.id)
             await message.channel.send('Registration Completed! Welcome to the pokemon world')
         else:
             await message.channel.send("You\'re already registered")
