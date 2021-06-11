@@ -94,7 +94,7 @@ async def set_active_pokemon(pokemon_id):
 
 async def insert_pokemon_captured(id_user_discord,id_pokemon):
     user_id = await get_user_id(id_user_discord)
-    sql = f"INSERT INTO user_pokemon(id_user, id_pokemon) VALUES ({user_id[0]}, {id_pokemon});"
+    sql = f"INSERT INTO user_pokemon(id_user, id_pokemon) VALUES ({user_id[0]}, {id_pokemon[0]});"
 
     conn = None
 
