@@ -44,8 +44,7 @@ async def get_user_id(id_user_discord):
 
 async def register_user(id_user_discord):
     """ insert a new user into the users table """
-    sql = """INSERT INTO users(user_discord_id,superballs,ultraballs,masterballs)
-                 VALUES(%s,50,25,1) RETURNING user_id;"""
+    sql = f"INSERT INTO users(user_discord_id,superballs,ultraballs,masterballs) VALUES({id_user_discord},50,25,1) RETURNING user_id;"
 
     conn = None
     user_id = None
@@ -54,7 +53,7 @@ async def register_user(id_user_discord):
         # create a new cursor
         cur = conn.cursor()
         # execute the INSERT statement
-        cur.execute(sql, (id_user_discord))
+        cur.execute(sql)
         # get the generated id back
         user_id = cur.fetchone()[0]
         # commit the changes to the database
