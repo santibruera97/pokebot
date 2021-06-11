@@ -46,7 +46,7 @@ async def on_message(message):
             pokemon_id = await (database.get_active_pokemon())
             if pokemon_id is None:
                 await message.channel.send('No pokemon to capture')
-            pokemon = pb.pokemon(int(pokemon_id))
+            pokemon = pb.pokemon(int(pokemon_id[0]))
             result = poke_maths.catch(4)
             if result == 1:
                 await database.insert_pokemon_captured(message.author.id,pokemon_id)
