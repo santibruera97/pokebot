@@ -1,17 +1,14 @@
 import psycopg2
 import os
-
-async def connect_db():
-    DATABASE_URL = os.environ['DATABASE_URL']
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    return conn
+DATABASE_URL = os.environ['DATABASE_URL']
 
 async def get_user(discord_id):
     """ query data from the vendors table """
     conn = None
     user = None
     try:
-        conn = connect_db()
+        DATABASE_URL = os.environ['DATABASE_URL']
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(f"SELECT user_discord_id FROM users WHERE user_discord_id = '{discord_id}'")
         user = cur.fetchone()
@@ -32,7 +29,7 @@ async def register_user(discord_id):
     conn = None
     user_id = None
     try:
-        conn = connect_db()
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         # create a new cursor
         cur = conn.cursor()
         # execute the INSERT statement
