@@ -143,7 +143,7 @@ def get_user_captures(user_discord_id):
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(f" SELECT COUNT(id_pokemon) FROM user_pokemon WHERE id_user = {user_id}'")
-        count = cur.fetchone()
+        count = cur.fetchone()[0]
         cur.close()
 
     except (Exception, psycopg2.DatabaseError) as error:
