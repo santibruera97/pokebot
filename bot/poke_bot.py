@@ -52,7 +52,8 @@ async def on_message(message):
                 await database.insert_pokemon_captured(message.author.id,pokemon_id)
                 await message.channel.send(f'{message.author.name} You captured a {pokemon.name.capitalize()}')
             else:
-                await message.channel.send(f'{pokemon.name.capitalize()} Fled away')
+                await message.channel.send(f'{pokemon.name.capitalize()} dogde the pokeball')
+
         except Exception as error:
             print(error)
 

@@ -104,7 +104,7 @@ async def insert_pokemon_captured(id_user_discord,id_pokemon):
         cur = conn.cursor()
         # execute the INSERT statement
         cur.execute(sql)
-        await set_active_pokemon('')
+        await set_active_pokemon('NULL')
         # commit the changes to the database
         conn.commit()
         # close communication with the database
