@@ -1,6 +1,5 @@
 import psycopg2
 import os
-import datetime;
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
@@ -72,8 +71,8 @@ async def register_user(id_user_discord):
 
 
 async def set_active_pokemon(pokemon_id):
-    ct = datetime.datetime.now()
-    sql = f"UPDATE sys_vars SET var_value= {str(pokemon_id)}, updated_at={ct} WHERE var_name = 'ACTIVE_POKEMON';"
+    sql = f"UPDATE sys_vars SET var_value= {str(pokemon_id)}, updated_at = current_timestamp WHERE var_name = " \
+          f"'ACTIVE_POKEMON'; "
 
     conn = None
 
@@ -82,7 +81,7 @@ async def set_active_pokemon(pokemon_id):
         # create a new cursor
         cur = conn.cursor()
         # execute the INSERT statement
-        cur.execute(sql, (str(pokemon_id)))
+        cur.execute(sql)
         # commit the changes to the database
         conn.commit()
         # close communication with the database

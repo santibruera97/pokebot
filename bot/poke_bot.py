@@ -43,7 +43,9 @@ async def on_message(message):
             await message.channel.send("You\'re already registered")
     if message.content.startswith('$pokeball'):
         try:
-            pokemon_id = int(database.get_active_pokemon())
+            pokemon_id = await int(database.get_active_pokemon())
+            if pokemon_id is None:
+                await message.channel.send('No pokemon to capture')
             pokemon = pb.pokemon(pokemon_id)
             result = poke_maths.catch(4)
             if result == 1:
