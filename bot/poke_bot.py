@@ -8,8 +8,8 @@ import database
 
 import os
 
-token = os.getenv("DISCORD_BOT_TOKEN")
-
+#token = os.getenv("DISCORD_BOT_TOKEN")
+token = 'ODUxOTU0NDQ4NzcwNTMxMzg4.YL_yaQ.dwBYzLxdDvxk-Yl_MZL1YR84GJE'
 client = discord.Client()
 
 
@@ -25,6 +25,7 @@ async def on_message(message):
     if message.content.startswith('$poke random'):
         poke_id = random.randint(1, 898)
         pokemon = pb.pokemon(poke_id)
+        print(pokemon.base_stats)
         shiny = random.randint(1, 2048)
         if shiny == 1024:
             poke_pic = pokemon.sprites.front_shiny
@@ -34,7 +35,6 @@ async def on_message(message):
         await message.channel.send(pokemon.name.capitalize())
     if message.content.startswith('$poke register'):
         user = await database.get_user(message.author.id)
-        print(user)
         if user is None:
             await database.register_user(message.author.id)
             await message.channel.send('Registration Completed! Welcome to the pokemon world')
