@@ -1,3 +1,4 @@
 discord.py
 pokebase
 psycopg2
+pprint

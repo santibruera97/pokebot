@@ -4,6 +4,7 @@ import discord
 import pokebase as pb
 import random
 import database
+import pprint
 
 
 import os
@@ -25,6 +26,8 @@ async def on_message(message):
         poke_id = random.randint(1, 898)
         pokemon = pb.pokemon(poke_id)
         print(pokemon.stats)
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(pokemon)
         shiny = random.randint(1, 2048)
         if shiny == 1024:
             poke_pic = pokemon.sprites.front_shiny
