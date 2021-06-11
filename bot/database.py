@@ -123,7 +123,7 @@ async def get_active_pokemon():
         DATABASE_URL = os.environ['DATABASE_URL']
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
-        cur.execute(f"SELECT var_value FROM users WHERE var_name = 'ACTIVE_POKEMON'")
+        cur.execute(f"SELECT var_value FROM sys_vars WHERE var_name = 'ACTIVE_POKEMON'")
         pokemon_id = cur.fetchone()
         cur.close()
 
