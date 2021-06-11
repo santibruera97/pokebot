@@ -32,7 +32,7 @@ async def register_user(discord_id):
     conn = None
     user_id = None
     try:
-        conn = connect_db
+        conn = connect_db()
         # create a new cursor
         cur = conn.cursor()
         # execute the INSERT statement
