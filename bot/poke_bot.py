@@ -24,7 +24,7 @@ async def on_message(message):
     if message.content.startswith('$poke random'):
         poke_id = random.randint(1, 898)
         pokemon = pb.pokemon(poke_id)
-        print(pokemon.base_stats)
+        print(pokemon.stats)
         shiny = random.randint(1, 2048)
         if shiny == 1024:
             poke_pic = pokemon.sprites.front_shiny
