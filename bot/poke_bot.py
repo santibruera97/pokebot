@@ -59,6 +59,7 @@ async def on_message(message):
 
     if message.content.startswith('$pokedex'):
         captured = database.get_user_captures(message.author.id)
-        await message.channel.send(f'{message.author.name} You captured {captured} of 898')
+        print(captured)
+        await message.channel.send(f'{message.author.name} You captured {captured[0]} of 898')
 
 client.run(token)
