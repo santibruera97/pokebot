@@ -137,7 +137,7 @@ def get_user_captures(user_discord_id):
     """ query data from the vendors table """
     conn = None
     count = None
-    user_id = get_user_id(user_discord_id)
+    user_id = await get_user_id(user_discord_id)
     try:
         DATABASE_URL = os.environ['DATABASE_URL']
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
