@@ -75,13 +75,13 @@ async def on_message(message):
         cur_page = 1
         chunk = pokemons[:per_page]
         linebreak = "\n"
-        message = await message.send(f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
-        await message.add_reaction("◀️")
-        await message.add_reaction("▶️")
+        list = await message.channel.send(f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+        await list.add_reaction("◀️")
+        await list.add_reaction("▶️")
         active = True
 
         def check(reaction, user):
-            return user == message.author and str(reaction.emoji) in ["◀️", "▶️"]
+            return user == list.author and str(reaction.emoji) in ["◀️", "▶️"]
             # or you can use unicodes, respectively: "\u25c0" or "\u25b6"
 
         while active:
@@ -94,16 +94,16 @@ async def on_message(message):
                         chunk = pokemons[(cur_page - 1) * per_page:cur_page * per_page]
                     else:
                         chunk = pokemons[(cur_page - 1) * per_page:]
-                    await message.edit(content=f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
-                    await message.remove_reaction(reaction, user)
+                    await list.edit(content=f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+                    await list.remove_reaction(reaction, user)
 
                 elif str(reaction.emoji) == "◀️" and cur_page > 1:
                     cur_page -= 1
                     chunk = pokemons[(cur_page - 1) * per_page:cur_page * per_page]
-                    await message.edit(content=f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
-                    await message.remove_reaction(reaction, user)
+                    await list.edit(content=f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+                    await list.remove_reaction(reaction, user)
             except asyncio.TimeoutError:
-                await message.delete()
+                await list.delete()
                 active = False
 
 client.run(token)
