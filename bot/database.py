@@ -142,7 +142,7 @@ async def get_user_captures(user_discord_id):
         DATABASE_URL = os.environ['DATABASE_URL']
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
-        cur.execute(f" SELECT COUNT(id_pokemon) FROM user_pokemon WHERE id_user = {user_id}'")
+        cur.execute(f" SELECT COUNT(id_pokemon) FROM user_pokemon WHERE id_user = {user_id[0]}'")
         count = cur.fetchone()[0]
         cur.close()
 
