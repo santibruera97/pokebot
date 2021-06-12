@@ -2,3 +2,4 @@
 /venv
 /.idea
 bot/__pycache__
+credentials.txt
