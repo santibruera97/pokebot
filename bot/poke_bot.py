@@ -69,7 +69,7 @@ async def on_message(message):
         await message.channel.send(f'{message.author.name} You captured {str(captured)} of 898')
     if message.content.startswith('$list'):
         pokemon_ids = await database.get_all_user_pokemons(message.author.id)
-        pokemons = [pb.pokemon(m).name for m in pokemon_ids]
+        pokemons = [pb.pokemon(m[0]).name for m in pokemon_ids]
         per_page = 10  # 10 members per page
         pages = math.ceil(len(pokemons) / per_page)
         cur_page = 1
