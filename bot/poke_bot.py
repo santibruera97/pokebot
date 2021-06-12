@@ -5,17 +5,22 @@ import pokebase as pb
 import random
 import database
 import poke_maths
+from discord.ext import commands
 
 
 import os
 
 token = os.getenv("DISCORD_BOT_TOKEN")
 client = discord.Client()
-
+bot = commands.Bot(command_prefix='$')
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+
+@bot.command()
+async def test(ctx, arg):
+    await ctx.send(arg)
 
 
 @client.event
@@ -59,7 +64,6 @@ async def on_message(message):
 
     if message.content.startswith('$pokedex'):
         captured = await database.get_user_captures(message.author.id)
-        print(captured)
-        await message.channel.send(f'{message.author.name} You captured {captured[0]} of 898')
+        await message.channel.send(f'{message.author.name} You captured {str(captured[0])} of 898')
 
 client.run(token)
