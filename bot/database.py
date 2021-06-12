@@ -133,7 +133,7 @@ async def get_active_pokemon():
             conn.close()
         return pokemon_id
 
-def get_user_captures(user_discord_id):
+async def get_user_captures(user_discord_id):
     """ query data from the vendors table """
     conn = None
     count = None
