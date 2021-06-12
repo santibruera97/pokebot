@@ -6,13 +6,15 @@ import random
 import database
 import poke_maths
 from discord.ext import commands
+import asyncio
+import math
 
 
 import os
 
 token = os.getenv("DISCORD_BOT_TOKEN")
 client = discord.Client()
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix='%')
 
 @client.event
 async def on_ready():
@@ -65,5 +67,43 @@ async def on_message(message):
     if message.content.startswith('$pokedex'):
         captured = await database.get_user_captures(message.author.id)
         await message.channel.send(f'{message.author.name} You captured {str(captured)} of 898')
+    if message.content.startswith('$list'):
+        pokemon_ids = await database.get_all_user_pokemons()
+        pokemons = [pb.pokemon(m).name for m in pokemon_ids]
+        per_page = 10  # 10 members per page
+        pages = math.ceil(len(pokemons) / per_page)
+        cur_page = 1
+        chunk = pokemons[:per_page]
+        linebreak = "\n"
+        message = await message.send(f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+        await message.add_reaction("◀️")
+        await message.add_reaction("▶️")
+        active = True
+
+        def check(reaction, user):
+            return user == message.author and str(reaction.emoji) in ["◀️", "▶️"]
+            # or you can use unicodes, respectively: "\u25c0" or "\u25b6"
+
+        while active:
+            try:
+                reaction, user = await bot.wait_for("reaction_add", timeout=60, check=check)
+
+                if str(reaction.emoji) == "▶️" and cur_page != pages:
+                    cur_page += 1
+                    if cur_page != pages:
+                        chunk = pokemons[(cur_page - 1) * per_page:cur_page * per_page]
+                    else:
+                        chunk = pokemons[(cur_page - 1) * per_page:]
+                    await message.edit(content=f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+                    await message.remove_reaction(reaction, user)
+
+                elif str(reaction.emoji) == "◀️" and cur_page > 1:
+                    cur_page -= 1
+                    chunk = pokemons[(cur_page - 1) * per_page:cur_page * per_page]
+                    await message.edit(content=f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+                    await message.remove_reaction(reaction, user)
+            except asyncio.TimeoutError:
+                await message.delete()
+                active = False
 
 client.run(token)

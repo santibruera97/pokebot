@@ -152,3 +152,22 @@ async def get_user_captures(user_discord_id):
         if conn is not None:
             conn.close()
         return count
+
+async def get_all_user_pokemons(user_discord_id):
+    conn = None
+    pokemon_ids = None
+    user_id = await get_user_id(user_discord_id)
+    try:
+        DATABASE_URL = os.environ['DATABASE_URL']
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cur = conn.cursor()
+        cur.execute(f" SELECT id_pokemon FROM user_pokemon WHERE id_user = {user_id[0]}")
+        pokemon_ids = cur.fetchall()
+        cur.close()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+        return pokemon_ids
