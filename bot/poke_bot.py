@@ -13,8 +13,7 @@ from pokemon import Pokemon
 import os
 from user import User
 
-#token = os.getenv("DISCORD_BOT_TOKEN")
-token = 'ODUxOTU0NDQ4NzcwNTMxMzg4.YL_yaQ.4SuMsyY8YpiH-5KUn6Ga_HizCsE'
+token = os.getenv("DISCORD_BOT_TOKEN")
 client = discord.Client()
 bot = commands.Bot(command_prefix='$')
 

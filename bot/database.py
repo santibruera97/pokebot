@@ -5,8 +5,7 @@ from pokemon import Pokemon
 from base import Session, engine, Base
 import os
 
-#DATABASE_URL = os.environ['DATABASE_URL']
-DATABASE_URL = "postgres://zlwnvtysdtrnyy:c2b5009d836e8703cf3b3493b2d638697287def3b58ee388058d2200efa0b16f@ec2-52-86-25-51.compute-1.amazonaws.com:5432/dq6kknk8r228g"
+DATABASE_URL = os.environ['DATABASE_URL']
 
 async def get_user_discord_id(id_user_discord):
     """ query data from the vendors table """
