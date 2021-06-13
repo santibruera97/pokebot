@@ -1,4 +1,7 @@
 import psycopg2
+
+from user import User
+from base import Session
 import os
 
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -9,7 +12,6 @@ async def get_user_discord_id(id_user_discord):
     conn = None
     user = None
     try:
-        DATABASE_URL = os.environ['DATABASE_URL']
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(f"SELECT user_discord_id FROM users WHERE user_discord_id = '{id_user_discord}'")
@@ -28,7 +30,6 @@ async def get_user_id(id_user_discord):
     conn = None
     user = None
     try:
-        DATABASE_URL = os.environ['DATABASE_URL']
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(f"SELECT user_id FROM users WHERE user_discord_id = '{id_user_discord}'")
@@ -119,7 +120,6 @@ async def get_active_pokemon():
     conn = None
     user = None
     try:
-        DATABASE_URL = os.environ['DATABASE_URL']
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(f"SELECT var_value FROM sys_vars WHERE var_name = 'ACTIVE_POKEMON'")
@@ -139,7 +139,6 @@ async def get_user_captures(user_discord_id):
     count = None
     user_id = await get_user_id(user_discord_id)
     try:
-        DATABASE_URL = os.environ['DATABASE_URL']
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(f" SELECT COUNT(id_pokemon) FROM user_pokemon WHERE id_user = {user_id[0]}")
@@ -158,7 +157,6 @@ async def get_all_user_pokemons(user_discord_id):
     pokemon_ids = None
     user_id = await get_user_id(user_discord_id)
     try:
-        DATABASE_URL = os.environ['DATABASE_URL']
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         cur = conn.cursor()
         cur.execute(f" SELECT id_pokemon FROM user_pokemon WHERE id_user = {user_id[0]}")
@@ -171,3 +169,15 @@ async def get_all_user_pokemons(user_discord_id):
         if conn is not None:
             conn.close()
         return pokemon_ids
+
+async def test():
+    session = Session()
+
+    # 3 - extract all movies
+    users = session.query(User).all()
+
+    # 4 - print movies' details
+    print('\n### All movies:')
+    for user in users:
+        print(f'{user.user_discord_id}')
+    print('')
