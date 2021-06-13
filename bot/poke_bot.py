@@ -9,9 +9,12 @@ import asyncio
 import math
 from discord.ext import commands
 import DiscordUtils
+from pokemon import Pokemon
 import os
+from user import User
 
-token = os.getenv("DISCORD_BOT_TOKEN")
+#token = os.getenv("DISCORD_BOT_TOKEN")
+token = 'ODUxOTU0NDQ4NzcwNTMxMzg4.YL_yaQ.4SuMsyY8YpiH-5KUn6Ga_HizCsE'
 client = discord.Client()
 bot = commands.Bot(command_prefix='$')
 
@@ -21,25 +24,17 @@ async def on_ready():
 
 @bot.command()
 async def test(ctx):
-    #await database.test()
-    pokemons_data = pb.pokemon('')
-
-    pokemons = pokemons_data.results
-
-    for pokemon in pokemons:
-        print(pokemon.name.capitalize())
-        print('\n')
-
-
+    user = await database.get_user(ctx.author.id)
+    for pokemon in user.pokemons:
+        print(pokemon.name)
     await ctx.send('Test')
 
 @bot.command()
 async def pokedex(ctx):
     embeds = []
     paginator = DiscordUtils.Pagination.CustomEmbedPaginator(ctx)
-    pokemons_data = pb.pokemon('')
-    pokemon_ids = await database.get_all_user_pokemons(ctx.author.id)
-    pokemons = [pokemons_data.results[m[0]].name.capitalize() for m in pokemon_ids]
+    user = await database.get_user(ctx.author.id)
+    pokemons = [pokemon.name.capitalize() for pokemon in user.pokemons]
     per_page = 15  # 10 members per page
     pages = math.ceil(len(pokemons) / per_page)
     cur_page = 1
@@ -59,7 +54,7 @@ async def pokedex(ctx):
         pokelist.append(f"{linebreak.join(page)}\n You captured {str(captured)} of 898")
 
     for poke_page in pokelist:
-        embeds.append(discord.Embed(color=ctx.author.color).add_field(name="Pokemon", value=poke_page))
+        embeds.append(discord.Embed(color=ctx.author.color).add_field(name=f"{ctx.author.name}'s pokedex", value=poke_page))
 
     paginator.add_reaction('⏮️', "first")
     paginator.add_reaction('⏪', "back")
@@ -70,17 +65,28 @@ async def pokedex(ctx):
 
 @bot.command(name="random")
 async def random_pokemon(ctx):
-    poke_id = random.randint(1, 898)
-    pokemon = pb.pokemon(poke_id)
-    await database.set_active_pokemon(poke_id)
-
-    shiny = random.randint(1, 2048)
-    if shiny == 1024:
-        poke_pic = pokemon.sprites.front_shiny
+    if isinstance(ctx.channel, discord.channel.DMChannel):
+        await ctx.channel.send('No pokemons here, sneaky bastard')
     else:
-        poke_pic = pokemon.sprites.front_default
-    await ctx.channel.send(poke_pic)
-    await ctx.channel.send(pokemon.name.capitalize())
+        poke_id = random.randint(1, 898)
+        pokemon = pb.pokemon(poke_id)
+        embed = discord.Embed(title=f"A wild {pokemon.name} has appeared",
+                              color=0xF6F636)
+        shiny = random.randint(1, 2048)
+        if shiny == 1024:
+            poke_pic = pokemon.sprites.front_shiny
+        else:
+            poke_pic = pokemon.sprites.front_default
+        print(poke_pic)
+        embed.set_image(url=poke_pic)
+        embed.add_field(name="HP", value=pokemon.stats[0].base_stat)
+        embed.add_field(name="Attack", value=pokemon.stats[1].base_stat)
+        embed.add_field(name="Defense", value=pokemon.stats[2].base_stat)
+        embed.add_field(name="Special-attack", value=pokemon.stats[3].base_stat)
+        embed.add_field(name="Special-defense", value=pokemon.stats[4].base_stat)
+        embed.add_field(name="Speed", value=pokemon.stats[5].base_stat)
+        await ctx.send(embed=embed)
+        await database.set_active_pokemon(poke_id)
 
 @bot.command()
 async def register(ctx):
@@ -93,18 +99,26 @@ async def register(ctx):
 
 @bot.command()
 async def pokeball(ctx):
-    try:
-        pokemon_id = await (database.get_active_pokemon())
-        if pokemon_id is None:
-            await ctx.channel.send('No pokemon to capture')
-        pokemon = pb.pokemon(int(pokemon_id[0]))
-        result = poke_maths.catch(4)
-        if result == 1:
-            await database.insert_pokemon_captured(ctx.author.id, pokemon_id)
-            await ctx.channel.send(f'{ctx.author.name} You captured a {pokemon.name.capitalize()}')
-        else:
-            await ctx.channel.send(f'Sorry {ctx.author.name}, {pokemon.name.capitalize()} dodge your pokeball')
-    except Exception as error:
-        print(error)
+    if isinstance(ctx.channel, discord.channel.DMChannel):
+        await ctx.channel.send("Can't do that here pal")
+    else:
+        try:
+            pokemon_id = await (database.get_active_pokemon())
+            if pokemon_id is None:
+                await ctx.channel.send('No pokemon to capture')
+            pokemon = pb.pokemon(int(pokemon_id[0]))
+            result = poke_maths.catch(4)
+            if result == 1:
+                user = await database.get_user(ctx.author.id)
+                pokemon = Pokemon(pokemon.name, pokemon.stats[0].base_stat, pokemon.stats[1].base_stat,
+                                  pokemon.stats[2].base_stat, pokemon.stats[3].base_stat,
+                                  pokemon.stats[4].base_stat, pokemon.stats[5].base_stat,
+                                  pokemon.sprites.front_default, pokemon.sprites.back_default, user.user_id)
+                await database.insert_pokemon(pokemon)
+                await ctx.channel.send(f'{ctx.author.name} You captured a {pokemon.name.capitalize()}')
+            else:
+                await ctx.channel.send(f'Sorry {ctx.author.name}, {pokemon.name.capitalize()} dodge your pokeball')
+        except Exception as error:
+            print(error)
 
 bot.run(token)

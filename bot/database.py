@@ -1,11 +1,12 @@
 import psycopg2
 
 from user import User
-from base import Session
+from pokemon import Pokemon
+from base import Session, engine, Base
 import os
 
-DATABASE_URL = os.environ['DATABASE_URL']
-
+#DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL = "postgres://zlwnvtysdtrnyy:c2b5009d836e8703cf3b3493b2d638697287def3b58ee388058d2200efa0b16f@ec2-52-86-25-51.compute-1.amazonaws.com:5432/dq6kknk8r228g"
 
 async def get_user_discord_id(id_user_discord):
     """ query data from the vendors table """
@@ -170,14 +171,26 @@ async def get_all_user_pokemons(user_discord_id):
             conn.close()
         return pokemon_ids
 
-async def test():
+async def get_all_users():
+    session = Session()
+    users = session.query(User).all()
+    return users
+
+async def insert_pokemon(pokemon):
+    Base.metadata.create_all(engine)
+
+    # 3 - create a new session
     session = Session()
 
-    # 3 - extract all movies
-    users = session.query(User).all()
+    session.add(pokemon)
 
-    # 4 - print movies' details
-    print('\n### All movies:')
-    for user in users:
-        print(f'{user.user_discord_id}')
-    print('')
+    session.commit()
+
+    print(f"Pokemon insertado: {pokemon.name}")
+
+    session.close()
+
+async def get_user(user_discord_id):
+        session = Session()
+        user = session.query(User).filter(User.user_discord_id == str(user_discord_id)).one()
+        return user
