@@ -59,7 +59,7 @@ async def pokedex(ctx):
         pokelist.append(f"{linebreak.join(page)}\n You captured {str(captured)} of 898")
 
     for poke_page in pokelist:
-        embeds.append(discord.Embed(color=ctx.author.color).add_field(name="Pokemon", value=poke_page))
+        embeds.append(discord.Embed(color=ctx.author.color).add_field(name=ctx.author.name, value=poke_page))
 
     paginator.add_reaction('⏮️', "first")
     paginator.add_reaction('⏪', "back")
@@ -95,15 +95,16 @@ async def register(ctx):
 async def pokeball(ctx):
     try:
         pokemon_id = await (database.get_active_pokemon())
-        if pokemon_id is None:
+        if len(pokemon_id) == 0:
             await ctx.channel.send('No pokemon to capture')
-        pokemon = pb.pokemon(int(pokemon_id[0]))
-        result = poke_maths.catch(4)
-        if result == 1:
-            await database.insert_pokemon_captured(ctx.author.id, pokemon_id)
-            await ctx.channel.send(f'{ctx.author.name} You captured a {pokemon.name.capitalize()}')
         else:
-            await ctx.channel.send(f'Sorry {ctx.author.name}, {pokemon.name.capitalize()} dodge your pokeball')
+            pokemon = pb.pokemon(int(pokemon_id[0]))
+            result = poke_maths.catch(4)
+            if result == 1:
+                await ctx.channel.send(f'{ctx.author.name} You captured a {pokemon.name.capitalize()}')
+                await database.insert_pokemon_captured(ctx.author.id, pokemon_id)
+            else:
+                await ctx.channel.send(f'Sorry {ctx.author.name}, {pokemon.name.capitalize()} dodge your pokeball')
     except Exception as error:
         print(error)
 
