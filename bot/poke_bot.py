@@ -59,7 +59,7 @@ async def pokedex(ctx):
         pokelist.append(f"{linebreak.join(page)}\n You captured {str(captured)} of 898")
 
     for poke_page in pokelist:
-        embeds.append(discord.Embed(color=ctx.author.color).add_field(name=ctx.author.name, value=poke_page))
+        embeds.append(discord.Embed(color=ctx.author.color).add_field(name=f"{ctx.author.name.capitalize()}'s pokedex", value=poke_page))
 
     paginator.add_reaction('⏮️', "first")
     paginator.add_reaction('⏪', "back")
@@ -72,8 +72,6 @@ async def pokedex(ctx):
 async def random_pokemon(ctx):
     poke_id = random.randint(1, 898)
     pokemon = pb.pokemon(poke_id)
-    await database.set_active_pokemon(poke_id)
-
     shiny = random.randint(1, 2048)
     if shiny == 1024:
         poke_pic = pokemon.sprites.front_shiny
@@ -81,6 +79,9 @@ async def random_pokemon(ctx):
         poke_pic = pokemon.sprites.front_default
     await ctx.channel.send(poke_pic)
     await ctx.channel.send(pokemon.name.capitalize())
+    await database.set_active_pokemon(poke_id)
+
+
 
 @bot.command()
 async def register(ctx):
@@ -95,7 +96,7 @@ async def register(ctx):
 async def pokeball(ctx):
     try:
         pokemon_id = await (database.get_active_pokemon())
-        if len(pokemon_id) == 0:
+        if pokemon_id[0] == '':
             await ctx.channel.send('No pokemon to capture')
         else:
             pokemon = pb.pokemon(int(pokemon_id[0]))
