@@ -53,7 +53,8 @@ async def pokedex(ctx):
         pokelist.append(f"{linebreak.join(page)}\n You captured {str(captured)} of 898")
 
     for poke_page in pokelist:
-        embeds.append(discord.Embed(color=ctx.author.color).add_field(name=f"{ctx.author.name}'s pokedex", value=poke_page))
+
+        embeds.append(discord.Embed(color=ctx.author.color).add_field(name=f"{ctx.author.name.capitalize()}'s pokedex", value=poke_page))
 
     paginator.add_reaction('⏮️', "first")
     paginator.add_reaction('⏪', "back")
@@ -119,5 +120,6 @@ async def pokeball(ctx):
                 await ctx.channel.send(f'Sorry {ctx.author.name}, {pokemon.name.capitalize()} dodge your pokeball')
         except Exception as error:
             print(error)
+
 
 bot.run(token)
