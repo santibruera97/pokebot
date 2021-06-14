@@ -1,174 +1,89 @@
 import psycopg2
-
 from user import User
 from pokemon import Pokemon
+from sys_vars import SystemVars
 from base import Session, engine, Base
 import os
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
-async def get_user_discord_id(id_user_discord):
-    """ query data from the vendors table """
-    conn = None
-    user = None
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
-        cur.execute(f"SELECT user_discord_id FROM users WHERE user_discord_id = '{id_user_discord}'")
-        user = cur.fetchone()
-        cur.close()
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-        return user
-
-async def get_user_id(id_user_discord):
-    """ query data from the vendors table """
-    conn = None
-    user = None
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
-        cur.execute(f"SELECT user_id FROM users WHERE user_discord_id = '{id_user_discord}'")
-        user = cur.fetchone()
-        cur.close()
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-        return user
 
 async def register_user(id_user_discord):
     """ insert a new user into the users table """
-    sql = f"INSERT INTO users(user_discord_id,superballs,ultraballs,masterballs) VALUES({id_user_discord},50,25,1) RETURNING user_id;"
-
-    conn = None
-    user_id = None
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        # create a new cursor
-        cur = conn.cursor()
-        # execute the INSERT statement
-        cur.execute(sql)
-        # get the generated id back
-        user_id = cur.fetchone()[0]
-        # commit the changes to the database
-        conn.commit()
-        # close communication with the database
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-    return user_id
-
-
-async def set_active_pokemon(pokemon_id):
-    sql = f"UPDATE sys_vars SET var_value= {str(pokemon_id)}, updated_at = current_timestamp WHERE var_name = " \
-          f"'ACTIVE_POKEMON'; "
-
-    conn = None
-
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        # create a new cursor
-        cur = conn.cursor()
-        # execute the INSERT statement
-        cur.execute(sql)
-        # commit the changes to the database
-        conn.commit()
-        # close communication with the database
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-async def insert_pokemon_captured(id_user_discord,id_pokemon):
-    user_id = await get_user_id(id_user_discord)
-    sql = f"INSERT INTO user_pokemon(id_user, id_pokemon) VALUES ({user_id[0]}, {id_pokemon[0]});"
-
-    conn = None
-
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        # create a new cursor
-        cur = conn.cursor()
-        # execute the INSERT statement
-        cur.execute(sql)
-        await set_active_pokemon('NULL')
-        # commit the changes to the database
-        conn.commit()
-        # close communication with the database
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-async def get_active_pokemon():
-    """ query data from the vendors table """
-    conn = None
     user = None
     try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
-        cur.execute(f"SELECT var_value FROM sys_vars WHERE var_name = 'ACTIVE_POKEMON'")
-        pokemon_id = cur.fetchone()
-        cur.close()
+        Base.metadata.create_all(engine)
+
+        session = Session()
+
+        user = User(id_user_discord,25,50,1)
+
+        session.add(user)
+
+        session.commit()
+
+        session.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return False
+    finally:
+        return True
+
+
+async def set_active_pokemon(pokemon_id,guild_id):
+    try:
+        Base.metadata.create_all(engine)
+
+        # 3 - create a new session
+        session = Session()
+        active_pokemon = await get_active_pokemon(guild_id)
+        if active_pokemon is None:
+            active_pokemon = SystemVars('ACTIVE_POKEMON', str(pokemon_id), str(guild_id))
+
+        else:
+            active_pokemon.var_value = str(pokemon_id)
+
+        session.merge(active_pokemon)
+
+        session.commit()
+
+        session.close()
+
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return False
+    finally:
+        return True
+
+
+async def get_active_pokemon(guild_id):
+    pokemon_id = None
+    try:
+        session = Session()
+        pokemon_id = session.query(SystemVars).filter(SystemVars.guild_id == str(guild_id)).one()
+        return pokemon_id
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
-        if conn is not None:
-            conn.close()
         return pokemon_id
 
 async def get_user_captures(user_discord_id):
-    """ query data from the vendors table """
-    conn = None
     count = None
-    user_id = await get_user_id(user_discord_id)
+    user = await get_user(user_discord_id)
     try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
-        cur.execute(f" SELECT COUNT(id_pokemon) FROM user_pokemon WHERE id_user = {user_id[0]}")
-        count = cur.fetchone()[0]
-        cur.close()
+        session = Session()
+        count = 0
+        count = session.query(Pokemon).distinct(Pokemon.name).filter(Pokemon.user_id == user.user_id).count()
+
+
 
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
-        if conn is not None:
-            conn.close()
         return count
 
-async def get_all_user_pokemons(user_discord_id):
-    conn = None
-    pokemon_ids = None
-    user_id = await get_user_id(user_discord_id)
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cur = conn.cursor()
-        cur.execute(f" SELECT id_pokemon FROM user_pokemon WHERE id_user = {user_id[0]}")
-        pokemon_ids = cur.fetchall()
-        cur.close()
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-        return pokemon_ids
 
 async def get_all_users():
     session = Session()
@@ -184,8 +99,6 @@ async def insert_pokemon(pokemon):
     session.add(pokemon)
 
     session.commit()
-
-    print(f"Pokemon insertado: {pokemon.name}")
 
     session.close()
 
