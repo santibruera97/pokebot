@@ -126,5 +126,30 @@ async def pokeball(ctx):
         except Exception as error:
             print(error)
 
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    active_pokemon = await (database.get_active_pokemon(ctx.guild.id))
+    pokemon_id = active_pokemon.var_value
+    if pokemon_id == 'None':
+        return
+    else:
+        guess = message.content.lower();
+        if(guess == active_pokemon.name.lower()):
+            await database.set_active_pokemon(None,ctx.guild.id)
+            await ctx.channel.send(f'{ctx.author.name} You captured a {pokemon.name.capitalize()}')
+            user = await database.get_user(ctx.author.id)
+            pokemon = Pokemon(pokemon.name, pokemon.stats[0].base_stat, pokemon.stats[1].base_stat,
+                                      pokemon.stats[2].base_stat, pokemon.stats[3].base_stat,
+                                      pokemon.stats[4].base_stat, pokemon.stats[5].base_stat,
+                                      pokemon.sprites.front_default, pokemon.sprites.back_default, user.user_id)
+            await database.insert_pokemon(pokemon)
+        else:
+            await ctx.channel.send(f'Sorry {ctx.author.name}, {pokemon.name.capitalize()} dodge your pokeball')
+
+
+
+
 
 bot.run(token)
