@@ -1,2 +1,5 @@
 discord.py
 pokebase
+psycopg2
+SQLAlchemy
+DiscordUtils
