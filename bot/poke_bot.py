@@ -91,7 +91,7 @@ async def random_pokemon(ctx):
    else:
        poke_id = random.randint(1, 898)
        pokemon = pb.pokemon(poke_id)
-       embed = discord.Embed(title=f"A wild {pokemon.name} has appeared :3",
+       embed = discord.Embed(title=f"A wild {pokemon.name} has appeared",
                              color=0xF6F636)
        shiny = random.randint(1, 2048)
        if shiny == 1024:
