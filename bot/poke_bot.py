@@ -18,29 +18,34 @@ client = discord.Client()
 bot = commands.Bot(command_prefix='$')
 
 @client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
-
 async def on_message(ctx):
-    if ctx.author == client.user:
-        return
-    active_pokemon = await (database.get_active_pokemon(ctx.guild.id))
-    pokemon_id = active_pokemon.var_value
-    if pokemon_id == 'None':
-        return
-    else:
-        guess = ctx.content.lower();
-        if(guess == active_pokemon.name.lower()):
-            await database.set_active_pokemon(None,ctx.guild.id)
-            await ctx.channel.send(f'{ctx.author.name} You captured a {pokemon.name.capitalize()}')
-            user = await database.get_user(ctx.author.id)
-            pokemon = Pokemon(pokemon.name, pokemon.stats[0].base_stat, pokemon.stats[1].base_stat,
-                                      pokemon.stats[2].base_stat, pokemon.stats[3].base_stat,
-                                      pokemon.stats[4].base_stat, pokemon.stats[5].base_stat,
-                                      pokemon.sprites.front_default, pokemon.sprites.back_default, user.user_id)
-            await database.insert_pokemon(pokemon)
+    try:
+        if ctx.author == client.user:
+            return
+        active_pokemon = await (database.get_active_pokemon(ctx.guild.id))
+        pokemon_id = active_pokemon.var_value
+        if pokemon_id == 'None':
+            return
         else:
-            await ctx.channel.send(f'Sorry {ctx.author.name}, {pokemon.name.capitalize()} dodge your pokeball')
+            guess = ctx.content.lower();
+            if(guess == active_pokemon.name.lower()):
+                # await database.set_active_pokemon(None,ctx.guild.id)
+                # await ctx.channel.send(f'{ctx.author.name} You captured a {pokemon.name.capitalize()}')
+                # user = await database.get_user(ctx.author.id)
+                # pokemon = Pokemon(pokemon.name, pokemon.stats[0].base_stat, pokemon.stats[1].base_stat,
+                #                          pokemon.stats[2].base_stat, pokemon.stats[3].base_stat,
+                #                          pokemon.stats[4].base_stat, pokemon.stats[5].base_stat,
+                #                          pokemon.sprites.front_default, pokemon.sprites.back_default, user.user_id)
+                #await database.insert_pokemon(pokemon)
+                await ctx.channel.send('Acertaste')
+
+            else:
+                await ctx.channel.send('No acertaste')
+                #await ctx.channel.send(f'Sorry {ctx.author.name}, {active_pokemon.name.capitalize()} dodge your pokeball')
+    except Exception as error:
+        await ctx.channel.send(str(error))
+        #
+
 
 @bot.command()
 async def test(ctx):
