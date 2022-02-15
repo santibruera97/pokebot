@@ -72,6 +72,5 @@ async def on_message(message):
     #     time.sleep(3)
     #     await message.channel.send('Ei ei ei ei. Que te pasa? Te volviste loco? Me estás cargando?')
 
-    ##
 
 client.run(token)
