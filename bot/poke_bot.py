@@ -84,30 +84,30 @@ async def pokedex(ctx):
     paginator.add_reaction('⏭️', "last")
     await paginator.run(embeds)
 
-@bot.command(name="random")
-async def random_pokemon(ctx):
-    if isinstance(ctx.channel, discord.channel.DMChannel):
-        await ctx.channel.send('No pokemons here, sneaky bastard')
-    else:
-        poke_id = random.randint(1, 898)
-        pokemon = pb.pokemon(poke_id)
-        embed = discord.Embed(title=f"A wild {pokemon.name} has appeared",
-                              color=0xF6F636)
-        shiny = random.randint(1, 2048)
-        if shiny == 1024:
-            poke_pic = pokemon.sprites.front_shiny
-        else:
-            poke_pic = pokemon.sprites.front_default
-        print(poke_pic)
-        embed.set_image(url=poke_pic)
-        embed.add_field(name="HP", value=pokemon.stats[0].base_stat)
-        embed.add_field(name="Attack", value=pokemon.stats[1].base_stat)
-        embed.add_field(name="Defense", value=pokemon.stats[2].base_stat)
-        embed.add_field(name="Special-attack", value=pokemon.stats[3].base_stat)
-        embed.add_field(name="Special-defense", value=pokemon.stats[4].base_stat)
-        embed.add_field(name="Speed", value=pokemon.stats[5].base_stat)
-        await ctx.send(embed=embed)
-        await database.set_active_pokemon(poke_id,ctx.guild.id)
+##@bot.command(name="random")
+##async def random_pokemon(ctx):
+##    if isinstance(ctx.channel, discord.channel.DMChannel):
+##        await ctx.channel.send('No pokemons here, sneaky bastard')
+##    else:
+##        poke_id = random.randint(1, 898)
+##        pokemon = pb.pokemon(poke_id)
+ ##       embed = discord.Embed(title=f"A wild {pokemon.name} has appeared",
+  ##                            color=0xF6F636)
+    ##    shiny = random.randint(1, 2048)
+      ##  if shiny == 1024:
+        ##    poke_pic = pokemon.sprites.front_shiny
+       ## else:
+         ##   poke_pic = pokemon.sprites.front_default
+       ## print(poke_pic)
+       ## embed.set_image(url=poke_pic)
+       ## embed.add_field(name="HP", value=pokemon.stats[0].base_stat)
+       ## embed.add_field(name="Attack", value=pokemon.stats[1].base_stat)
+       ## embed.add_field(name="Defense", value=pokemon.stats[2].base_stat)
+       ## embed.add_field(name="Special-attack", value=pokemon.stats[3].base_stat)
+       ## embed.add_field(name="Special-defense", value=pokemon.stats[4].base_stat)
+      ##  embed.add_field(name="Speed", value=pokemon.stats[5].base_stat)
+        ##await ctx.send(embed=embed)
+        ##await database.set_active_pokemon(poke_id,ctx.guild.id)
 
 @bot.command()
 async def register(ctx):
