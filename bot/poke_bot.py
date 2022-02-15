@@ -44,6 +44,7 @@ async def on_message(ctx):
                 #await ctx.channel.send(f'Sorry {ctx.author.name}, {active_pokemon.name.capitalize()} dodge your pokeball')
     except Exception as error:
         await ctx.channel.send(str(error))
+        #
 
 
 @bot.command()
